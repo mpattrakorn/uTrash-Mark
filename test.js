@@ -22,17 +22,44 @@ import GridView from 'react-native-super-grid';
 
 import { StackNavigator } from 'react-navigation';
 
+import LocalizedStrings from 'react-native-localization';
+
 
 import mock from './mock.js';
+
+let strings = new LocalizedStrings({
+
+ en:{
+   back:"Back",
+   select:"SELECT",
+   food:"FOOD",
+   plastic:"PLASTIC",
+   paper:"PAPER",
+   glass: "GLASS",
+   others: "OTHERS",
+   clear: "Clear",
+   confirm: "CONFIRM",
+   done: "DONE"
+ },
+ th: {
+   back:"กลับ",
+   select:"เลือกขยะ",
+   food:"อาหาร",
+   plastic:"พลาสติก",
+   paper:"กระดาษ",
+   glass: "แก้ว",
+   others: "อื่นๆ",
+   clear: "ล้าง",
+   confirm: "ยืนยัน",
+   done: "เสร็จสิ้น"
+ }
+});
 
 class ChatScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     title: `Chat with ${navigation.state.params.user}`,
   });
 
-  state = {
-
-  }
 
   runBlue(itemList) {
     var blue = []
@@ -63,6 +90,7 @@ class ChatScreen extends React.Component {
           )
         }
       }
+      
 
       return green.map(item =>
               <View key={item.id}>
@@ -143,15 +171,15 @@ class ChatScreen extends React.Component {
 
         </View>
         <View style={{flexDirection: 'row', flex:4}} >
-            <Image source={{uri: 'https://www.img.in.th/images/85bc1287410b98b4bfd45c37dcf2e868.png'}} style={{width: 100, height: 100, flex:1}} />
-            <Image source={{uri: 'https://www.img.in.th/images/ce6c1f888f1c83b61a50008ac8bab3e8.png'}} style={{width: 100, height: 100, flex:1}} />
-            <Image source={{uri: 'https://www.img.in.th/images/2b7ea42a8137c658e6ea11ad01475cd3.png'}} style={{width: 100, height: 100, flex:1}} />
-            <Image source={{uri: 'https://www.img.in.th/images/bb83dfe19f1f8d5b2fc2fa0feec9b67c.png'}} style={{width: 100, height: 100, flex:1}} />
+            <Image source={require('./img/blueBin.png')} style={{width: 100, height: 100, flex:1}} />
+            <Image source={require('./img/greenBin.png')} style={{width: 100, height: 100, flex:1}} />
+            <Image source={require('./img/redBin.png')} style={{width: 100, height: 100, flex:1}} />
+            <Image source={require('./img/yellowBin.png')} style={{width: 100, height: 100, flex:1}} />
         </View>
         <View style={styles.buttonBar} >
               <View style={{flex:1, alignItems:'center'}} >
                   <TouchableHighlight style={styles.buttonStyle} >
-                    <Text style={styles.buttonText} > DONE </Text>
+                    <Text style={styles.buttonText} > {strings.done} </Text>
                   </TouchableHighlight>
               </View>
         </View>
@@ -230,24 +258,35 @@ class HomeScreen extends React.Component {
     runItems(){
 
       if(this.state.food == true){
-        var foods = []
+          var foods = []
 
-        for(let i=0; i< mock.length; i++){
-          if(mock[i].type == "food"){
-            foods.push(
-              mock[i]
+          for(let i=0; i< mock.length; i++){
+            if(mock[i].type == "food"){
+              foods.push(
+                mock[i]
+              )
+            }
+          }
+
+          if(strings.getLanguage()=="en"){
+            return foods.map(item =>
+                <View key={item.id} style={styles.itemStyle} >
+                    <Image source={item.icon} style={{width: 40, height: 40}} />
+                    <Text>{item.name.en} </Text>
+                    <Text style={styles.plusButton} 
+                    onPress={() => this.addToList(item.id)} > + </Text>
+                </View>
+            )
+          } else {
+            return foods.map(item =>
+                <View key={item.id} style={styles.itemStyle} >
+                    <Image source={item.icon} style={{width: 40, height: 40}} />
+                    <Text>{item.name.th} </Text>
+                    <Text style={styles.plusButton} 
+                    onPress={() => this.addToList(item.id)} > + </Text>
+                </View>
             )
           }
-        }
-
-        return foods.map(item =>
-            <View key={item.id} style={styles.itemStyle} >
-                <Image source={item.icon} style={{width: 40, height: 40}} />
-                <Text>{item.name} </Text>
-                <Text style={styles.plusButton} 
-                onPress={() => this.addToList(item.id)} > + </Text>
-            </View>
-        )
 
       } else if(this.state.plastic == true) {
 
@@ -261,14 +300,25 @@ class HomeScreen extends React.Component {
             }
           }
 
-          return plastics.map(item =>
-              <View key={item.id} style={styles.itemStyle} >
-                  <Image source={item.icon}  style={{width: 40, height: 40}} />
-                  <Text>{item.name} </Text>
-                  <Text style={styles.plusButton} 
-                  onPress={() => this.addToList(item.id)} > + </Text>
-              </View>
-          )
+           if(strings.getLanguage()=="en"){
+            return plastics.map(item =>
+                <View key={item.id} style={styles.itemStyle} >
+                    <Image source={item.icon} style={{width: 40, height: 40}} />
+                    <Text>{item.name.en} </Text>
+                    <Text style={styles.plusButton} 
+                    onPress={() => this.addToList(item.id)} > + </Text>
+                </View>
+            )
+          } else {
+            return plastics.map(item =>
+                <View key={item.id} style={styles.itemStyle} >
+                    <Image source={item.icon} style={{width: 40, height: 40}} />
+                    <Text>{item.name.th} </Text>
+                    <Text style={styles.plusButton} 
+                    onPress={() => this.addToList(item.id)} > + </Text>
+                </View>
+            )
+          }
         
       } else if(this.state.paper == true) {
 
@@ -282,54 +332,87 @@ class HomeScreen extends React.Component {
           }
         }
 
-        return papers.map(item =>
-            <View key={item.id} style={styles.itemStyle} >
-                <Image source={item.icon} style={{width: 40, height: 40}} />
-                <Text>{item.name} </Text>
-                <Text style={styles.plusButton} 
-                onPress={() => this.addToList(item.id)} > + </Text>
-            </View>
-        )
+        if(strings.getLanguage()=="en"){
+            return papers.map(item =>
+                <View key={item.id} style={styles.itemStyle} >
+                    <Image source={item.icon} style={{width: 40, height: 40}} />
+                    <Text>{item.name.en} </Text>
+                    <Text style={styles.plusButton} 
+                    onPress={() => this.addToList(item.id)} > + </Text>
+                </View>
+            )
+          } else {
+            return papers.map(item =>
+                <View key={item.id} style={styles.itemStyle} >
+                    <Image source={item.icon} style={{width: 40, height: 40}} />
+                    <Text>{item.name.th} </Text>
+                    <Text style={styles.plusButton} 
+                    onPress={() => this.addToList(item.id)} > + </Text>
+                </View>
+            )
+          }
 
       } else if(this.state.glass == true) {
         var glass = []
 
-      for(let i=0; i< mock.length; i++){
-        if(mock[i].type == "glass"){
-          glass.push(
-            mock[i]
-          )
+        for(let i=0; i< mock.length; i++){
+          if(mock[i].type == "glass"){
+            glass.push(
+              mock[i]
+            )
+          }
         }
-      }
 
-        return glass.map(item =>
-            <View key={item.id} style={styles.itemStyle} >
-                <Image source={item.icon} style={{width: 40, height: 40}} />
-                <Text>{item.name} </Text>
-                <Text style={styles.plusButton} 
-                onPress={() => this.addToList(item.id)} > + </Text>
-            </View>
-        )
+         if(strings.getLanguage()=="en"){
+            return glass.map(item =>
+                <View key={item.id} style={styles.itemStyle} >
+                    <Image source={item.icon} style={{width: 40, height: 40}} />
+                    <Text>{item.name.en} </Text>
+                    <Text style={styles.plusButton} 
+                    onPress={() => this.addToList(item.id)} > + </Text>
+                </View>
+            )
+          } else {
+            return glass.map(item =>
+                <View key={item.id} style={styles.itemStyle} >
+                    <Image source={item.icon} style={{width: 40, height: 40}} />
+                    <Text>{item.name.th} </Text>
+                    <Text style={styles.plusButton} 
+                    onPress={() => this.addToList(item.id)} > + </Text>
+                </View>
+            )
+          }
 
       } else if(this.state.others == true) {
         var others = []
 
-      for(let i=0; i< mock.length; i++){
-        if(mock[i].type == "others"){
-          others.push(
-            mock[i]
-          )
+        for(let i=0; i< mock.length; i++){
+          if(mock[i].type == "others"){
+            others.push(
+              mock[i]
+            )
+          }
         }
-      }
 
-        return others.map(item =>
-            <View key={item.id} style={styles.itemStyle} >
-                <Image source={item.icon} style={{width: 40, height: 40}} />
-                <Text>{item.name} </Text>
-                <Text style={styles.plusButton} 
-                onPress={() => this.addToList(item.id)} > + </Text>
-            </View>
-        )
+         if(strings.getLanguage()=="en"){
+            return others.map(item =>
+                <View key={item.id} style={styles.itemStyle} >
+                    <Image source={item.icon} style={{width: 40, height: 40}} />
+                    <Text>{item.name.en} </Text>
+                    <Text style={styles.plusButton} 
+                    onPress={() => this.addToList(item.id)} > + </Text>
+                </View>
+            )
+          } else {
+            return others.map(item =>
+                <View key={item.id} style={styles.itemStyle} >
+                    <Image source={item.icon} style={{width: 40, height: 40}} />
+                    <Text>{item.name.th} </Text>
+                    <Text style={styles.plusButton} 
+                    onPress={() => this.addToList(item.id)} > + </Text>
+                </View>
+            )
+          }
       }
 
     }
@@ -353,9 +436,16 @@ class HomeScreen extends React.Component {
           })
     }
 
-    setModalVisible(visible) {
-    this.setState({modalVisible: visible});
-  }
+    toThai() {
+      strings.setLanguage('th');
+      this.setState({});
+    }
+
+    toEng() {
+      strings.setLanguage('en')
+      this.setState({});
+    }
+
   
 
   render() {
@@ -363,17 +453,19 @@ class HomeScreen extends React.Component {
     return (
       <View style={styles.container}>
             <View style={styles.toolbar}>
-                <Text style={styles.titleText} > Back </Text>
-                <Text style={styles.titleText} > SELECT </Text>
-              <View style={{flex:1}}>
-              </View>
+                <Text style={styles.titleText} > {strings.back} </Text>
+                <Text style={styles.titleText} > {strings.select} </Text>
+              
+                <Button title="EN" onPress={() => this.toEng()} />
+                <Button title="TH" onPress={() => this.toThai()} />
+              
             </View>
             <View style={styles.toolbar2}>
-                <Text style={styles.titleText} onPress={()=> this.setFood() } > FOOD </Text>
-                <Text style={styles.titleText} onPress={()=> this.setPlastic() } >  PLASTIC  </Text>
-                <Text style={styles.titleText} onPress={()=> this.setPaper() } >  PAPER  </Text>
-                <Text style={styles.titleText} onPress={()=> this.setGlass() } >  GLASS  </Text>
-                <Text style={styles.titleText} onPress={()=> this.setOthers() } >  OTHERS </Text>
+                <Text style={styles.titleText} onPress={()=> this.setFood() } > {strings.food} </Text>
+                <Text style={styles.titleText} onPress={()=> this.setPlastic() } >  {strings.plastic} </Text>
+                <Text style={styles.titleText} onPress={()=> this.setPaper() } >  {strings.paper}  </Text>
+                <Text style={styles.titleText} onPress={()=> this.setGlass() } >  {strings.glass}  </Text>
+                <Text style={styles.titleText} onPress={()=> this.setOthers() } >  {strings.others} </Text>
             </View>
             <View style={styles.body}>
               <ScrollView>
@@ -384,7 +476,7 @@ class HomeScreen extends React.Component {
 
                 <TouchableHighlight onPress={() => this.clearList() }
                   style={{backgroundColor: '#DFDFDF', height: 18, }} >
-                  <Text style={{color: 'red'}} > Clear </Text>
+                  <Text style={{color: 'red'}} > {strings.clear} </Text>
                 </TouchableHighlight>
 
                 <GridView
@@ -399,7 +491,7 @@ class HomeScreen extends React.Component {
               <View style={{flex:1, alignItems:'center'}} >
                   <TouchableHighlight style={styles.buttonStyle}
                   onPress = {() => navigate('Chat', {items: this.state.itemList})} >
-                    <Text style={styles.buttonText} > CONFIRM </Text>
+                    <Text style={styles.buttonText} > {strings.confirm} </Text>
                   </TouchableHighlight>
               </View>
 
